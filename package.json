@@ -1,0 +1,25 @@
+{
+  "name": "githubuseractivity",
+  "version": "1.0.0",
+  "description": "Use GitHub API to fetch user activity and display it in the terminal.",
+  "main": "./src/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lamloi1109/GitHub_User_Activity.git"
+  },
+  "keywords": [
+    "Github",
+    "Activity",
+    "CLI",
+    "Terminal"
+  ],
+  "author": "lamloi1109",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lamloi1109/GitHub_User_Activity/issues"
+  },
+  "homepage": "https://github.com/lamloi1109/GitHub_User_Activity#readme"
+}
