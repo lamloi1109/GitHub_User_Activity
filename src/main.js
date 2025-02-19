@@ -1,6 +1,7 @@
 const process = require('node:process');
+const { getUserEvents } = require('./github_api');
 
-(() => {
+(async () => {
     try{
         const arguments = process.argv.slice(2)
         // Kiểm tra số lượng tham số đầu vào
@@ -45,7 +46,35 @@ const process = require('node:process');
         if(!isValidUserName) return 
 
         // Kiểm tra xem user có tồn tại hay không
+        const userEvents = await getUserEvents(userName)
+
+        console.log(userEvents)
+        // PushEvent Pushed 3 commits to kamranahmedse/developer-roadmap
+        // Delete
+        // CreateEvent
+
+        // IssuesEvent
+        // IssuesCommentEvent
+        // PullRequestEvent
+        // PullRequestReviewEvent
+        // PullRequestReviewCommentEvent
         
+        // WatchEvent
+        // ForKEvent
+        // ReleaseEvent
+        
+        // GistEvent
+        // GollumEvent
+        
+        // MemberEvent
+        // MembershipEvent
+        // OrganizationEvent
+
+        // WorkflowDispatchEvent
+        // WorkflowRunEvent
+        
+        // PublicEvent
+        // RepositoryEvent
 
     } catch(error) {
         console.log(error)
