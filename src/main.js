@@ -48,7 +48,15 @@ const { getUserEvents } = require('./github_api');
         // Kiểm tra xem user có tồn tại hay không
         const userEvents = await getUserEvents(userName)
 
-        console.log(userEvents)
+        if(userEvents?.status !== 200 ) {
+
+            const typeMessage = Object.keys(userEvents).includes('status') ? 'ERROR' : 'INFO'
+            const status = typeMessage === 'ERROR' ? userEvents?.status : 200
+            const message = `${typeMessage}: ${status} ${userEvents?.message}`
+            console.log(message)
+            return
+        }
+
         // PushEvent Pushed 3 commits to kamranahmedse/developer-roadmap
         // Delete
         // CreateEvent

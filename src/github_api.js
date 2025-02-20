@@ -20,14 +20,16 @@ const url = process.env.GITHUB_API_URL
 
  async function getUserEvents(userName) {
     try{
-        const url = `https://api.github.com/users/${userName}/events`
-        console.log(url)
+        const url = `https://api.github.com/users/${userName}/events` 
         const response = await fetch(url)
         const data = await response.json()
-        console.log(data)
         return data
     } catch(error) {
-        console.log(error)
+        console.log(error.message)
+        return {
+            status: 500,
+            message: error.message
+        }
     }
 }
 
