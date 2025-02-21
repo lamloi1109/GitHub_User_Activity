@@ -1,5 +1,6 @@
 const process = require('node:process');
 const { getUserEvents } = require('./github_api');
+const { displayHistory } = require('./display');
 
 (async () => {
     try{
@@ -47,43 +48,7 @@ const { getUserEvents } = require('./github_api');
 
         // Kiểm tra xem user có tồn tại hay không
         const userEvents = await getUserEvents(userName)
-
-        if(userEvents?.status !== 200 ) {
-
-            const typeMessage = Object.keys(userEvents).includes('status') ? 'ERROR' : 'INFO'
-            const status = typeMessage === 'ERROR' ? userEvents?.status : 200
-            const message = `${typeMessage}: ${status} ${userEvents?.message}`
-            console.log(message)
-            return
-        }
-
-        // PushEvent Pushed 3 commits to kamranahmedse/developer-roadmap
-        // Delete
-        // CreateEvent
-
-        // IssuesEvent
-        // IssuesCommentEvent
-        // PullRequestEvent
-        // PullRequestReviewEvent
-        // PullRequestReviewCommentEvent
-        
-        // WatchEvent
-        // ForKEvent
-        // ReleaseEvent
-        
-        // GistEvent
-        // GollumEvent
-        
-        // MemberEvent
-        // MembershipEvent
-        // OrganizationEvent
-
-        // WorkflowDispatchEvent
-        // WorkflowRunEvent
-        
-        // PublicEvent
-        // RepositoryEvent
-
+        displayHistory(userEvents)
     } catch(error) {
         console.log(error)
     }
