@@ -1,5 +1,6 @@
 const url = process.env.GITHUB_API_URL
-
+const https = require('https')
+const { resolve } = require('path')
 // Hàm xử lý việc gửi yêu cầu
 // Hàm xử lý việc nhận yêu cầu
 // Hàm kiểm tra xem user có tồn tại hay không
@@ -21,9 +22,8 @@ const url = process.env.GITHUB_API_URL
  async function getUserEvents(userName) {
     try{
         const url = `https://api.github.com/users/${userName}/events` 
-        const response = await fetch(url)
-        const data = await response.json()
-        return data
+        const userEvents = await handleFetch(url)
+        return userEvents
     } catch(error) {
         console.log(error.message)
         return {
@@ -33,4 +33,47 @@ const url = process.env.GITHUB_API_URL
     }
 }
 
+// Khi gửi yêu cầu lên server
+// Cần quan tâm đến các yếu tố như
+// Timeout
+// Kết nối mạng
+// Lỗi từ server
+// Cần có xủ lý khi server phẩn hồi quá lâu tránh việc chờ đợi vô hạn
+
+// Đối với fetch sẽ không tự handle các lỗi 4xx và 5xx
+// Cần phải tự handle hoặc sử dụng thư viện khác để handle
+
+async function handleFetch(url, options) {
+    try{
+
+        const controller = new AbortController()
+        const timeout = setTimeout(() => controller.abort(),5000)
+        const response = await fetch(url, {...options, signal: controller.signal });
+        const data = await response.json()
+        clearTimeout(timeout)
+        if (Object.keys(data).includes('message')) {
+            throw new Error(data.message)
+        }
+
+        return data
+    } catch(error)
+    {
+        if(error.message === 'AbortError') {
+            return {
+                message: 'ERROR: Request timeout'
+            }
+        }        
+        if (error.message === 'Failed to fetch' ||
+            error.message === 'Network error'
+        ) {
+            return {
+                message: 'ERROR: No internet connection'
+            }
+        }
+        // Lỗi khác
+        return { message: `ERROR: ${error.message}` }    
+    }   
+}
+
 exports.getUserEvents = getUserEvents
+exports.handleFetch = handleFetch

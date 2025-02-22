@@ -1,4 +1,6 @@
 function displayHistory(userEvents) {
+    try {
+        
     if(  typeof userEvents !== 'object' || Object.keys(userEvents).length === 0) {
         console.log(`ERROR: Invalid Input`)
         return
@@ -66,8 +68,10 @@ function displayHistory(userEvents) {
                 console.log(`${page.name} ${page.action}.`)
             })
         }
-    });
-
+    });    
+    } catch (error) {
+        console.log(error) 
+    }
 }
 
 exports.displayHistory = displayHistory
