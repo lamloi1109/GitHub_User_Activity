@@ -1,9 +1,10 @@
 const process = require('node:process');
 const { getUserEvents } = require('./github_api');
 const { displayHistory } = require('./display');
-
+const { loadCache, addCache, saveCache, getDataCache } = require('./cache');
 (async () => {
     try{
+        let cache = []
         const arguments = process.argv.slice(2)
         // Kiểm tra số lượng tham số đầu vào
         // Nhận vào 1 tham số
@@ -20,6 +21,14 @@ const { displayHistory } = require('./display');
         if(arguments.length > 1 ) {
             console.log(`ERROR: Expected only 1 argument, but got ${arguments.length}`)
             console.log(arguments)
+            return
+        }
+
+        // Load cache từ file
+        cache = await loadCache(cache)
+
+        if ( typeof cache !== 'object' || cache === null) {
+            console.log("ERROR: Cache is invalid!")
             return
         }
 
@@ -46,9 +55,22 @@ const { displayHistory } = require('./display');
         const isValidUserName = validateUserName(userName)
         if(!isValidUserName) return 
 
+        // Kiểm tra xem dữ liêu đã được cache hay chưa
+        const dataInCache = getDataCache(userName, cache )
+        if( dataInCache ) {
+            console.log(`Data for ${userName} is already in cache.`)
+            displayHistory(dataInCache)
+            return 
+        }
+
         // Kiểm tra xem user có tồn tại hay không
         const userEvents = await getUserEvents(userName)
         displayHistory(userEvents)
+
+        // Lưu dữ liệu vào cache
+        cache = addCache(userName, userEvents, cache, 5000)
+        saveCache(cache)
+
     } catch(error) {
         console.log(error)
     }
