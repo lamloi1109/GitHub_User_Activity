@@ -1,13 +1,18 @@
 function displayHistory(userEvents) {
     try {
         
-    if(  typeof userEvents !== 'object' || Object.keys(userEvents).length === 0) {
+    if(  typeof userEvents !== 'object' ) {
         console.log(`ERROR: Invalid Input`)
         return
     }
 
+    if(Object.keys(userEvents).length === 0){
+        console.log(`ERROR: No data to display`)
+        return
+    }
+
     // Early return Handle error    
-    if(Object.keys(userEvents).includes('status') && userEvents?.status !== 200 ) {
+    if((Object.keys(userEvents).includes('status') || Object.keys(userEvents).includes('message') )&& userEvents?.status !== 200 ) {
 
         const typeMessage = Object.keys(userEvents).includes('status') ? 'ERROR' : 'INFO'
         const status = typeMessage === 'ERROR' ? userEvents?.status : 200
