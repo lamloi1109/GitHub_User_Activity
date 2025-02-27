@@ -18,8 +18,8 @@ const { loadCache, addCache, saveCache, getDataCache } = require('./cache');
             return
         }
 
-        if(arguments.length > 1 ) {
-            console.log(`ERROR: Expected only 1 argument, but got ${arguments.length}`)
+        if(arguments.length > 2) {
+            console.log(`ERROR: Expected only 2 argument, but got ${arguments.length}`)
             console.log(arguments)
             return
         }
@@ -34,7 +34,8 @@ const { loadCache, addCache, saveCache, getDataCache } = require('./cache');
 
         // Nên chia tách các điều kiện ra đẻ thông báo lỗi dễ hiểu hơn
         const userName = arguments[0]
-
+        // Nhận vào eventType
+        const eventType = arguments[1]?? null
         // Kiểm tra xem nó có phải là một github username hợp lệ hay không
         // Các chữ cái, số và dấu gạch ngang
         // Độ dài tối đa là 39 ký tự    
@@ -56,21 +57,21 @@ const { loadCache, addCache, saveCache, getDataCache } = require('./cache');
         if(!isValidUserName) return 
 
         // Kiểm tra xem dữ liêu đã được cache hay chưa
-        const dataInCache = getDataCache(userName, cache )
+        let dataInCache = getDataCache(userName, cache )
         if( dataInCache ) {
             console.log(`Data for ${userName} is already in cache.`)
+            dataInCache = filterEvents(dataInCache, eventType)
             displayHistory(dataInCache)
             return 
         }
 
         // Kiểm tra xem user có tồn tại hay không
-        const userEvents = await getUserEvents(userName)
+        let userEvents = await getUserEvents(userName)
+        userEvents = filterEvents(userEvents, eventType)
         displayHistory(userEvents)
-
         // Lưu dữ liệu vào cache
         cache = addCache(userName, userEvents, cache, 5000)
         saveCache(cache)
-
     } catch(error) {
         console.log(error)
     }
@@ -108,4 +109,16 @@ function validateUserName(userName) {
         console.log(error)
     }
     return false;
+}
+
+
+function filterEvents(events, eventType) {
+    try {
+        if(!eventType ||  !Array.isArray(events)) return events 
+        return events.filter(event => event.type === eventType)
+    } catch(error) {
+        console.log(error)
+        return events
+    }
+    
 }
