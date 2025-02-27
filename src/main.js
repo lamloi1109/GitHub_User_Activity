@@ -18,8 +18,8 @@ const { loadCache, addCache, saveCache, getDataCache } = require('./cache');
             return
         }
 
-        if(arguments.length > 1 ) {
-            console.log(`ERROR: Expected only 1 argument, but got ${arguments.length}`)
+        if(arguments.length > 2) {
+            console.log(`ERROR: Expected only 2 argument, but got ${arguments.length}`)
             console.log(arguments)
             return
         }
@@ -114,7 +114,7 @@ function validateUserName(userName) {
 
 function filterEvents(events, eventType) {
     try {
-        if(!eventType) return events 
+        if(!eventType ||  !Array.isArray(events)) return events 
         return events.filter(event => event.type === eventType)
     } catch(error) {
         console.log(error)
