@@ -96,7 +96,7 @@ function isExpired(cacheData) {
     try {
         const currentTime = new Date().getTime()
         const expiredTime = cacheData.timeExpired
-        return currentTime < expiredTime        
+        return currentTime > expiredTime        
     } catch (error) {
         console.log(error)
         
