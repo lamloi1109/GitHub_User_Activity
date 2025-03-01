@@ -33,6 +33,25 @@ const { resolve } = require('path')
     }
 }
 
+async function getRepository(userName, repoName) {
+    try{
+        const url = `https://api.github.com/repos/${userName}/${repoName}/events` 
+        const repoEvents = await handleFetch(url)
+        return repoEvents
+
+    } catch(error) {
+        console.log(error.message)
+        return {
+            status: 500,
+            message: error.message
+        }
+    }
+}
+
+
+
+
+
 // Khi gửi yêu cầu lên server
 // Cần quan tâm đến các yếu tố như
 // Timeout
@@ -77,3 +96,4 @@ async function handleFetch(url, options) {
 
 exports.getUserEvents = getUserEvents
 exports.handleFetch = handleFetch
+exports.getRepository = getRepository
