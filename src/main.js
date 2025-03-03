@@ -1,29 +1,12 @@
 const process = require('node:process');
-const { getUserEvents } = require('./github_api');
+const { getUserEvents, getRepository } = require('./github_api');
 const { displayHistory } = require('./display');
 const { loadCache, addCache, saveCache, getDataCache } = require('./cache');
+
 (async () => {
     try{
         let cache = []
         const arguments = process.argv.slice(2)
-        // Kiểm tra số lượng tham số đầu vào
-        // Nhận vào 1 tham số
-        // if( arguments.length === 0 || arguments.length > 1 ) {
-        //     console.log(`ERROR: Số lương tham số tối đa là 1`)
-        //     return
-        // }
-        
-        if(arguments.length === 0) {
-            console.log(`ERROR: Expected 1 argument, but got none.`)
-            return
-        }
-
-        if(arguments.length > 2) {
-            console.log(`ERROR: Expected only 2 argument, but got ${arguments.length}`)
-            console.log(arguments)
-            return
-        }
-
         // Load cache từ file
         cache = await loadCache(cache)
 
@@ -31,11 +14,12 @@ const { loadCache, addCache, saveCache, getDataCache } = require('./cache');
             console.log("ERROR: Cache is invalid!")
             return
         }
-
+        
         // Nên chia tách các điều kiện ra đẻ thông báo lỗi dễ hiểu hơn
         const userName = arguments[0]
+        const endpoint = arguments[1]?? 'userEvents'
         // Nhận vào eventType
-        const eventType = arguments[1]?? null
+        const slug = arguments[2]?? null
         // Kiểm tra xem nó có phải là một github username hợp lệ hay không
         // Các chữ cái, số và dấu gạch ngang
         // Độ dài tối đa là 39 ký tự    
@@ -56,21 +40,41 @@ const { loadCache, addCache, saveCache, getDataCache } = require('./cache');
         const isValidUserName = validateUserName(userName)
         if(!isValidUserName) return 
 
+        let dataList = null
+
         // Kiểm tra xem dữ liêu đã được cache hay chưa
         let dataInCache = getDataCache(userName, cache )
         if( dataInCache ) {
             console.log(`Data for ${userName} is already in cache.`)
-            dataInCache = filterEvents(dataInCache, eventType)
+            dataInCache = filterEvents(dataInCache, slug)
             displayHistory(dataInCache)
             return 
         }
 
         // Kiểm tra xem user có tồn tại hay không
-        let userEvents = await getUserEvents(userName)
-        userEvents = filterEvents(userEvents, eventType)
-        displayHistory(userEvents)
+        
+        if (endpoint === 'userEvents') {
+            const eventType = slug
+            dataList = await getUserEvents(userName)
+            dataList = filterEvents(dataList, eventType)
+        }
+
+        if(endpoint === 'repoEvents') {
+            const repoName = slug
+            dataList = await getRepository(userName, repoName)
+
+            // Xử lý kết quả trả về cho từng event trong payload của repo
+            
+            
+            
+            // dataList = filterEvents(dataList, repoName)
+        }
+
+
+        displayHistory(dataList)
         // Lưu dữ liệu vào cache
-        cache = addCache(userName, userEvents, cache, 5000)
+        const command = `${userName} ${endpoint} ${slug}`
+        cache = addCache(command, dataList, cache, 5000)
         saveCache(cache)
     } catch(error) {
         console.log(error)

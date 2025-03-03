@@ -26,45 +26,48 @@ function displayHistory(userEvents) {
     userEvents.forEach(event => {
         if(event.type === 'PushEvent') {
             console.log(`- Pushed ${event.payload.commits.length} commits to ${event.repo.name}.`)
+            event.payload.commits.forEach((commit) => {
+                console.log(`+ Message: ${commit.message} at ${event.created_at}`)
+            })
         }
         if(event.type === 'Delete') {
-            console.log(`- Deleted ${event.payload.ref} at ${event.repo.name}.`)
+            console.log(`- Deleted ${event.payload.ref} at ${event.repo.name} on ${event.repo.created_at}.`)
         }
 
         if(event.type === 'CreateEvent') {
-            console.log(`- Created ${event.payload.ref_type} ${event.payload.ref} at ${event.repo.name}.`)
+            console.log(`- Created ${event.payload.ref_type} ${event.payload.ref} at ${event.repo.name} on ${event.created_at}.`)
         }
 
         if(event.type === 'IssuesEvent') {
-            console.log(`- Opened a new issue in ${event.repo.name}.`)
+            console.log(`- Opened a new issue in ${event.repo.name} on ${event.created_at}.`)
         }
 
         if(event.type === 'IssuesCommentEvent') {
-            console.log(`- Commented on an issue in ${event.repo.name}.`)
+            console.log(`- Commented on an issue in ${event.repo.name} on ${event.created_at}.`)
         }
 
         if(event.type === 'PullRequestEvent') {
-            console.log(`- Opened a new pull request in ${event.repo.name}.`)
+            console.log(`- Opened a new pull request in ${event.repo.name} on ${event.created_at}.`)
         }
 
         if(event.type === 'PullRequestReviewCommentEvent') {
-            console.log(`- Opened a new pull request review comment in ${event.repo.name}`)
+            console.log(`- Opened a new pull request review comment in ${event.repo.name} on ${event.created_at}`)
         }
 
         if(event.type === 'WatchEvent') {
-            console.log(`- Watched a repo ${event.repo.name}.`)
+            console.log(`- Watched a repo ${event.repo.name} on ${event.created_at}.`)
         }
 
         if(event.type === 'ForkEvent' ) {
-            console.log(`- Forked a repo ${event.repo.name}.`)
+            console.log(`- Forked a repo ${event.repo.name} on ${event.created_at}.`)
         }
 
         if (event.type === 'ReleaseEvent') {
-            console.log(`- Released a repo ${event.repo.name}.`)
+            console.log(`- Released a repo ${event.repo.name} on ${event.created_at}.`)
         }
 
         if (event.type === 'MemberEvent') {
-            console.log(`- Member ${event.payload.action} to repository ${event.repo.name}`)
+            console.log(`- Member ${event.payload.action} to repository ${event.repo.name} on ${event.created_at}`)
         }
 
         if (event.type === 'GollumEvent') {
