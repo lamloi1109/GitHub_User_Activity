@@ -64,16 +64,17 @@ const { loadCache, addCache, saveCache, getDataCache } = require('./cache');
             dataList = await getRepository(userName, repoName)
 
             // Xử lý kết quả trả về cho từng event trong payload của repo
-
             
-
+            
+            
             // dataList = filterEvents(dataList, repoName)
         }
 
 
         displayHistory(dataList)
         // Lưu dữ liệu vào cache
-        cache = addCache(userName, dataList, cache, 5000)
+        const command = `${userName} ${endpoint} ${slug}`
+        cache = addCache(command, dataList, cache, 5000)
         saveCache(cache)
     } catch(error) {
         console.log(error)
