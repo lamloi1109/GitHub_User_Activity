@@ -1,6 +1,6 @@
 const process = require('node:process');
-const { getUserEvents, getRepository } = require('./github_api');
-const { displayHistory } = require('./display');
+const { getUserEvents, getRepository , getUser} = require('./github_api');
+const { displayData } = require('./display');
 const { loadCache, addCache, saveCache, getDataCache } = require('./cache');
 
 (async () => {
@@ -43,11 +43,14 @@ const { loadCache, addCache, saveCache, getDataCache } = require('./cache');
         let dataList = null
 
         // Kiểm tra xem dữ liêu đã được cache hay chưa
-        let dataInCache = getDataCache(userName, cache )
+
+        const command = `${userName} ${endpoint} ${slug}`
+
+        let dataInCache = getDataCache(command, cache )
         if( dataInCache ) {
             console.log(`Data for ${userName} is already in cache.`)
             dataInCache = filterEvents(dataInCache, slug)
-            displayHistory(dataInCache)
+            displayData(dataInCache)
             return 
         }
 
@@ -64,16 +67,14 @@ const { loadCache, addCache, saveCache, getDataCache } = require('./cache');
             dataList = await getRepository(userName, repoName)
 
             // Xử lý kết quả trả về cho từng event trong payload của repo
-            
-            
-            
-            // dataList = filterEvents(dataList, repoName)
         }
 
+        if( endpoint === 'userInfo' ) {
+            dataList = await getUser(userName)
+        }
 
-        displayHistory(dataList)
+        displayData(dataList)
         // Lưu dữ liệu vào cache
-        const command = `${userName} ${endpoint} ${slug}`
         cache = addCache(command, dataList, cache, 5000)
         saveCache(cache)
     } catch(error) {

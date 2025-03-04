@@ -1,29 +1,38 @@
-function displayHistory(userEvents) {
+function displayData(datas) {
     try {
         
-    if(  typeof userEvents !== 'object' ) {
+    if(  typeof datas !== 'object' ) {
         console.log(`ERROR: Invalid Input`)
         return
     }
 
-    if(Object.keys(userEvents).length === 0){
+    if(Object.keys(datas).length === 0){
         console.log(`ERROR: No data to display`)
         return
     }
 
     // Early return Handle error    
-    if((Object.keys(userEvents).includes('status') || Object.keys(userEvents).includes('message') )&& userEvents?.status !== 200 ) {
+    if((Object.keys(datas).includes('status') || Object.keys(datas).includes('message') )&& datas?.status !== 200 ) {
 
-        const typeMessage = Object.keys(userEvents).includes('status') ? 'ERROR' : 'INFO'
-        const status = typeMessage === 'ERROR' ? userEvents?.status : 200
-        const message = `${typeMessage}: ${status} ${userEvents?.message}`
+        const typeMessage = Object.keys(datas).includes('status') ? 'ERROR' : 'INFO'
+        const status = typeMessage === 'ERROR' ? datas?.status : 200
+        const message = `${typeMessage}: ${status} ${datas?.message}`
         console.log(message)
         return
     }
 
     console.log('Output: ')
 
-    userEvents.forEach(event => {
+    if(datas?.type === 'User') {
+
+        console.log(`- login: ${datas.login}`)
+        console.log(`- email: ${datas.email}`)
+        console.log(`- name: ${datas.name}`)
+        console.log(`- company: ${datas.company}`)
+        return
+    }
+
+    datas.forEach(event => {
         if(event.type === 'PushEvent') {
             console.log(`- Pushed ${event.payload.commits.length} commits to ${event.repo.name}.`)
             event.payload.commits.forEach((commit) => {
@@ -82,4 +91,4 @@ function displayHistory(userEvents) {
     }
 }
 
-exports.displayHistory = displayHistory
+exports.displayData = displayData

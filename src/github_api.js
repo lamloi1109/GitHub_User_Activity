@@ -19,7 +19,7 @@ const { resolve } = require('path')
 // JSON response là gì
 
 
- async function getUserEvents(userName) {
+async function getUserEvents(userName) {
     try{
         const url = `https://api.github.com/users/${userName}/events` 
         const userEvents = await handleFetch(url)
@@ -30,6 +30,17 @@ const { resolve } = require('path')
             status: 500,
             message: error.message
         }
+    }
+}
+
+async function getUser(userName) {
+    try {   
+        const url = `https://api.github.com/users/${userName}`
+
+        const user = await handleFetch(url)
+        return user
+    } catch(error) {
+        console.log(error.message)
     }
 }
 
@@ -97,3 +108,4 @@ async function handleFetch(url, options) {
 exports.getUserEvents = getUserEvents
 exports.handleFetch = handleFetch
 exports.getRepository = getRepository
+exports.getUser = getUser
